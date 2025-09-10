@@ -1,4 +1,5 @@
 import json
+import os
 
 OPTION_1 = "1: Adicionar nova tarefa"
 OPTION_2 = "2: Listar todas as tarefas"
@@ -20,6 +21,7 @@ def salvar_tarefas(tarefas):
         json.dump(tarefas, file, indent=4)
 
 def options():
+    print(" ")
     print(OPTION_1)
     print(OPTION_2)
     print(OPTION_3)
@@ -27,13 +29,16 @@ def options():
     print(OPTION_5)
 
 def adicionar_tarefa(tarefas):
+    print("Digite 2 para voltar ao menu")
     descricao = input("Digite a descrição da tarefa: ")
-    tarefa = {"descricao": descricao, "concluida": False}
-    tarefas.append(tarefa)
-    salvar_tarefas(tarefas)
-    print(f"TAREFA '{descricao}' ADICIONADA COM SUCESSO!")
+    if descricao != "2":
+        tarefa = {"descricao": descricao, "concluida": False}
+        tarefas.append(tarefa)
+        print(f"TAREFA '{descricao}' ADICIONADA COM SUCESSO!")
+    else:
+        pass
 
-def listar_tarefas(tarefas): 
+def listar_tarefas(tarefas):
     print("LISTA DE TAREFAS:")
     if not tarefas:
         print("Nenhuma tarefa encontrada.")
@@ -41,67 +46,74 @@ def listar_tarefas(tarefas):
     for i, tarefa in enumerate(tarefas, start=1):
         status = "Concluída" if tarefa["concluida"] else "Pendente"
         print(f"{i}. {tarefa['descricao']} - {status}")
-    salvar_tarefas(tarefas)
+
+def selecionar_tarefas(tarefas):
+    try:
+        index = int(input()) - 1
+        if 0 <= index < len(tarefas):
+            return index
+        else:
+            print("Número inválido.")
+    except ValueError:
+        print("Entrada inválida. Por favor, digite um número.")
+
 
 def marcar_concluida(tarefas):
     if tarefas:
         listar_tarefas(tarefas)
-        try:
-            index = int(input("Digite o número da tarefa que deseja marcar como concluída: ")) - 1
-            if 0 <= index < len(tarefas):
-                tarefas[index]["concluida"] = True
-                print(f"TAREFA '{tarefas[index]['descricao']}' MARCADA COMO CONCLUÍDA!")
-            else:
-                print("Número inválido.")
-        except ValueError:
-            print("Entrada inválida. Por favor, digite um número.")
-        salvar_tarefas(tarefas)
+        print("Digite o número da tarefa que deseja marcar como concluída: ")
+        tarefa_selecionada = selecionar_tarefas(tarefas)
+        if tarefa_selecionada is not None:
+            tarefas[tarefa_selecionada]["concluida"] = True
+            print(f"TAREFA '{tarefas[tarefa_selecionada]['descricao']}' MARCADA COMO CONCLUÍDA!")
+        
 
 def remover_tarefa(tarefas):
     if tarefas:
         listar_tarefas(tarefas)
-        try:
-            index = int(input("Digite o número da tarefa que deseja remover: ")) - 1
-            if 0 <= index < len(tarefas):
-                tarefa_removida = tarefas.pop(index)
-                print(f"TAREFA '{tarefa_removida['descricao']}' REMOVIDA COM SUCESSO!")
-            else:
-                print("Número inválido.")
-        except ValueError:
-            print("Entrada inválida. Por favor, digite um número.")
-        salvar_tarefas(tarefas)
+        print("Digite o número da tarefa que deseja remover: ")
+        tarefa_selecionada = selecionar_tarefas(tarefas)
+        if tarefa_selecionada is not None:
+            tarefa_excluida = tarefas.pop(tarefa_selecionada)
+            print(f"TAREFA '{tarefa_excluida['descricao']}' REMOVIDA COM SUCESSO!")
+
 
 def sair():
     print("Saindo do programa. Até mais!")
     exit()
 
-def resolution_option(N):
-    print("\n")
+def resolution_option(N, lista_de_tarefas):
     if N == 1:
+        print("")
         print("Adicionar nova tarefa")
-        adicionar_tarefa(carregar_tarefas())
+        adicionar_tarefa(lista_de_tarefas)
     elif N == 2:
+        print("")
         print("Listar todas as tarefas")
-        listar_tarefas(carregar_tarefas())
-    elif N == 3: 
+        listar_tarefas(lista_de_tarefas)
+    elif N == 3:
+        print("")
         print("Marcar tarefa como concluída")
-        marcar_concluida(carregar_tarefas())
+        marcar_concluida(lista_de_tarefas)
     elif N == 4:
+        print("")
         print("Remover tarefa")
-        remover_tarefa(carregar_tarefas())
+        remover_tarefa(lista_de_tarefas)
     elif N == 5:
+        salvar_tarefas(lista_de_tarefas)
         sair()
     else:
         print("Opção inválida. Tente novamente.")
     
-    
-    
 def main():
+    lista_de_tarefas = []
+    lista_de_tarefas = carregar_tarefas()
     while True:
         options()
         N = int(input())
-        resolution_option(N)
-                
+        os.system('cls')
+        resolution_option(N, lista_de_tarefas)
+    
     
 if __name__ == "__main__":
     main()
