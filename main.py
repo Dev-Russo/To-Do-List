@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 
@@ -32,26 +33,58 @@ def options():
     print(OPTION_5)
     print(OPTION_6)
     
-def listar_e_definir_prioridades():
+def definir_prioridades():
     print("Prioridades disponíveis:")
     for i, prioridade in enumerate(PRIORIDADES, start=1):
         print(f"{i}. {prioridade}")
     index = int(input("Selecione a prioridade (1-3): ")) - 1
     if 0 <= index < len(PRIORIDADES):
         return PRIORIDADES[index]
+    
+def definir_data_hora():
+    print("Defina a data de termino da atividade (dd/mm/aaaa:): ")
+    data_input = input()
+    try:
+        data_termino = datetime.strptime(data_input, "%d/%m/%Y")
+        return data_termino
+    except ValueError:
+        print("Formato de data inválido. Use dd/mm/aaaa.")
+        return None
 
 def adicionar_tarefa(tarefas):
     print("Digite 2 para voltar ao menu")
     descricao = input("Digite a descrição da tarefa: ")
     if descricao != "2":
         tarefa = {"descricao": descricao, "concluida": False}
-        prioridade = listar_e_definir_prioridades()
+        prioridade = definir_prioridades()
+        data_termino = definir_data_hora()
+        if data_termino:
+            tarefa["data_termino"] = data_termino.strftime("%d/%m/%Y")
         if prioridade:
             tarefa["prioridade"] = prioridade
         tarefas.append(tarefa)
         print(f"TAREFA '{descricao}' ADICIONADA COM SUCESSO!")
     else:
         pass
+    
+def list_format(tarefas):
+    print("Como você gostaria de listar as tarefas?")
+    print("1: Ordem Alfabética")
+    print("2: Por Prioridade")
+    print("3: Por Status (Concluída/Pendente)")
+    print("4: DateTime de Término")
+    type = int(input())
+    if type == 1:
+        tarefas.sort(key=lambda x: x['descricao'])
+    elif type == 2: 
+        tarefas.sort(key=lambda x: x['prioridade'])
+    elif type == 3:
+        tarefas.sort(key=lambda x: x['concluida'])
+    elif type == 4:
+        tarefas.sort(key=lambda x: datetime.strptime(x['data_termino'], "%d/%m/%Y") if 'data_termino' in x else datetime.max)
+    else:
+        print("Opção inválida. Listando na ordem original.")
+    listar_tarefas(tarefas)
 
 def listar_tarefas(tarefas):
     print("LISTA DE TAREFAS:")
@@ -61,7 +94,8 @@ def listar_tarefas(tarefas):
     for i, tarefa in enumerate(tarefas, start=1):
         status = "Concluída" if tarefa["concluida"] else "Pendente"
         prioridade = tarefa.get("prioridade", "Sem prioridade")
-        print(f"{i}. {tarefa['descricao']} - Prioridade: {prioridade} - {status} ")
+        data_termino = tarefa.get("data_termino", "Sem data de término")
+        print(f"{i}. {tarefa['descricao']} - {prioridade} - {status} - {data_termino} ")
 
 def selecionar_tarefas(tarefas):
     try:
@@ -101,16 +135,42 @@ def update_tarefas(tarefas):
         print("Selecione a Terefa que deseja editar: ")
         tarefa_selecionada = selecionar_tarefas(tarefas)
         if tarefa_selecionada is not None:
-            print("De a nova descrição para sua tarefa: ")
-            nova_descricao = input()
-            print("Deseja definir uma nova prioridade? (s/n)")
-            resposta = input().lower()
-            if resposta == 's':
-                nova_prioridade = listar_e_definir_prioridades()
-                if nova_prioridade:
-                    tarefas[tarefa_selecionada]['prioridade'] = nova_prioridade
-            tarefas[tarefa_selecionada]['descricao'] = nova_descricao
-            print(f"TAREFA ATUALIZADA PARA '{nova_descricao}' COM SUCESSO!")
+            print("Selecione o que deseja alterar: ")
+            while True:
+                tarefa_atual = tarefas[tarefa_selecionada]
+                print("\n--- Editando Tarefa ---")
+                print(f"Descrição: {tarefa_atual.get('descricao', 'N/D')}")
+                print(f"Prioridade: {tarefa_atual.get('prioridade', 'N/D')}")
+                print(f"Data de Término: {tarefa_atual.get('data_termino', 'N/D')}")
+                print("-------------------------")
+
+                print("O que deseja alterar?")
+                escolha = input("1: Descrição\n2: Prioridade\n3: Data de Término\n4: Salvar e voltar ao menu principal\nSua escolha: ")
+
+                if escolha == '1':
+                    nova_descricao = input("Digite a nova descrição: ")
+                    tarefas[tarefa_selecionada]['descricao'] = nova_descricao
+                    print("Descrição atualizada!")
+
+                elif escolha == '2':
+                    nova_prioridade = definir_prioridades() 
+                    if nova_prioridade:
+                        tarefas[tarefa_selecionada]['prioridade'] = nova_prioridade
+                        print("Prioridade atualizada!")
+
+                elif escolha == '3':
+                    nova_data = definir_data_hora() 
+                    if nova_data:
+                        tarefas[tarefa_selecionada]['data_termino'] = nova_data.strftime("%d/%m/%Y")
+                        print("Data de término atualizada!")
+                
+                elif escolha == '4':
+                    print(f"\nTAREFA '{tarefas[tarefa_selecionada]['descricao']}' ATUALIZADA COM SUCESSO!")
+                    break
+                
+                else:
+                    print("Opção inválida. Tente novamente.")
+                
             
         
         
@@ -126,7 +186,7 @@ def resolution_option(N, lista_de_tarefas):
     elif N == 2:
         print("")
         print("Listar todas as tarefas")
-        listar_tarefas(lista_de_tarefas)
+        list_format(lista_de_tarefas)
     elif N == 3:
         print("")
         print("Marcar tarefa como concluída")
@@ -135,13 +195,13 @@ def resolution_option(N, lista_de_tarefas):
         print("")
         print("Remover tarefa")
         remover_tarefa(lista_de_tarefas)
-    elif N == 6:
-        salvar_tarefas(lista_de_tarefas)
-        sair()
     elif N == 5:
         print("")
         print("Alterar Descricao da Tarefa")
         update_tarefas(lista_de_tarefas)
+    elif N == 6:
+        salvar_tarefas(lista_de_tarefas)
+        sair()
     else:
         print("Opção inválida. Tente novamente.")
     
