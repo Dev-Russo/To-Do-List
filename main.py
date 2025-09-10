@@ -13,41 +13,27 @@ COMANDOS = {
     6: gt.sair_e_salvar
 }  
 
-def resolution_option(N, lista_de_tarefas):
-    if N == 1:
-        print("")
-        print("Adicionar nova tarefa")
-        adicionar_tarefa(lista_de_tarefas)
-    elif N == 2:
-        print("")
-        print("Listar todas as tarefas")
-        iu.list_format(lista_de_tarefas)
-    elif N == 3:
-        print("")
-        print("Marcar tarefa como concluída")
-        marcar_concluida(lista_de_tarefas)
-    elif N == 4:
-        print("")
-        print("Remover tarefa")
-        remover_tarefa(lista_de_tarefas)
-    elif N == 5:
-        print("")
-        print("Alterar Descricao da Tarefa")
-        update_tarefas(lista_de_tarefas)
-    elif N == 6:
-        sair_e_salvar()
-    else:
-        print("Opção inválida. Tente novamente.")
-
 def main():
     lista_de_tarefas = []
     lista_de_tarefas = ga.carregar_tarefas()
     while True:
-        iu.options()
-        N = int(input())
-        os.system('cls')
-        resolution_option(N, lista_de_tarefas)
-    
+        try:
+            iu.options()
+            N = int(input("Escolha uma opção: "))
+            os.system('cls')
+
+            if N in COMANDOS:
+                funcao_escolhida = COMANDOS[N]
+                if N == 6: 
+                    funcao_escolhida(lista_de_tarefas) 
+                    break 
+                else:
+                    funcao_escolhida(lista_de_tarefas)
+            else:
+                print("Opção inválida. Por favor, escolha um número do menu.")
+
+        except ValueError:
+            print("Entrada inválida. Por favor, digite um NÚMERO.")
 
 if __name__ == "__main__":
     main()
