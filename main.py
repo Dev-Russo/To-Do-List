@@ -5,7 +5,8 @@ OPTION_1 = "1: Adicionar nova tarefa"
 OPTION_2 = "2: Listar todas as tarefas"
 OPTION_3 = "3: Marcar tarefa como concluída"
 OPTION_4 = "4: Remover tarefa"
-OPTION_5 = "5: Sair"
+OPTION_5 = "5: Alterar tarefa"
+OPTION_6 = "6: Sair"
 
 NAME_ARQUIVO = "tarefas.json"
 
@@ -27,6 +28,7 @@ def options():
     print(OPTION_3)
     print(OPTION_4)
     print(OPTION_5)
+    print(OPTION_6)
 
 def adicionar_tarefa(tarefas):
     print("Digite 2 para voltar ao menu")
@@ -78,6 +80,17 @@ def remover_tarefa(tarefas):
             print(f"TAREFA '{tarefa_excluida['descricao']}' REMOVIDA COM SUCESSO!")
 
 
+##Update de Tarefas
+def update_tarefas(tarefas):
+    if tarefas:
+        listar_tarefas(tarefas)
+        print("Selecione a Terefa que deseja editar: ")
+        tarefa_selecionada = selecionar_tarefas(tarefas)
+        if tarefa_selecionada is not None:
+            print("De a nova descrição para sua tarefa: ")
+            nova_descricao = input()
+            tarefas[tarefa_selecionada]['descricao'] = nova_descricao
+
 def sair():
     print("Saindo do programa. Até mais!")
     exit()
@@ -99,9 +112,13 @@ def resolution_option(N, lista_de_tarefas):
         print("")
         print("Remover tarefa")
         remover_tarefa(lista_de_tarefas)
-    elif N == 5:
+    elif N == 6:
         salvar_tarefas(lista_de_tarefas)
         sair()
+    elif N == 5:
+        print("")
+        print("Alterar Descricao da Tarefa")
+        update_tarefas(lista_de_tarefas)
     else:
         print("Opção inválida. Tente novamente.")
     
@@ -114,6 +131,6 @@ def main():
         os.system('cls')
         resolution_option(N, lista_de_tarefas)
     
-    
+
 if __name__ == "__main__":
     main()
