@@ -82,7 +82,10 @@ def update_tarefas(tarefas):
                     print("Opção inválida. Tente novamente.")    
 
 
-def sair():
+
+
+def sair_e_salvar(tarefas):
+    ga.salvar_tarefas(tarefas)
     print("Saindo do programa. Até mais!")
     exit()
 
@@ -108,7 +111,6 @@ def resolution_option(N, lista_de_tarefas):
         print("Alterar Descricao da Tarefa")
         update_tarefas(lista_de_tarefas)
     elif N == 6:
-        ga.salvar_tarefas(lista_de_tarefas)
-        sair()
+        sair_e_salvar()
     else:
         print("Opção inválida. Tente novamente.")

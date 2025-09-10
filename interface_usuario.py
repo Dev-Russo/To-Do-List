@@ -9,6 +9,12 @@ OPTION_6 = "6: Sair"
 
 PRIORIDADES = ["Baixa", "Média", "Alta"]
 
+MAPEAMENTO_DE_PRIORIDADES = {
+    "Baixa": 1,
+    "Média": 2,
+    "Alta": 3
+}
+
 def options():
     print(" ")
     print(OPTION_1)
@@ -47,7 +53,7 @@ def list_format(tarefas):
     if type == 1:
         tarefas.sort(key=lambda x: x['descricao'])
     elif type == 2: 
-        tarefas.sort(key=lambda x: x['prioridade'])
+        tarefas.sort(key=lambda x: MAPEAMENTO_DE_PRIORIDADES.get(x.get('prioridade', ''), 0), reverse=True)
     elif type == 3:
         tarefas.sort(key=lambda x: x['concluida'])
     elif type == 4:
