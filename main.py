@@ -8,6 +8,8 @@ OPTION_4 = "4: Remover tarefa"
 OPTION_5 = "5: Alterar tarefa"
 OPTION_6 = "6: Sair"
 
+PRIORIDADES = ["Baixa", "Média", "Alta"]
+
 NAME_ARQUIVO = "tarefas.json"
 
 def carregar_tarefas():
@@ -29,12 +31,23 @@ def options():
     print(OPTION_4)
     print(OPTION_5)
     print(OPTION_6)
+    
+def listar_e_definir_prioridades():
+    print("Prioridades disponíveis:")
+    for i, prioridade in enumerate(PRIORIDADES, start=1):
+        print(f"{i}. {prioridade}")
+    index = int(input("Selecione a prioridade (1-3): ")) - 1
+    if 0 <= index < len(PRIORIDADES):
+        return PRIORIDADES[index]
 
 def adicionar_tarefa(tarefas):
     print("Digite 2 para voltar ao menu")
     descricao = input("Digite a descrição da tarefa: ")
     if descricao != "2":
         tarefa = {"descricao": descricao, "concluida": False}
+        prioridade = listar_e_definir_prioridades()
+        if prioridade:
+            tarefa["prioridade"] = prioridade
         tarefas.append(tarefa)
         print(f"TAREFA '{descricao}' ADICIONADA COM SUCESSO!")
     else:
@@ -47,7 +60,8 @@ def listar_tarefas(tarefas):
         return
     for i, tarefa in enumerate(tarefas, start=1):
         status = "Concluída" if tarefa["concluida"] else "Pendente"
-        print(f"{i}. {tarefa['descricao']} - {status}")
+        prioridade = tarefa.get("prioridade", "Sem prioridade")
+        print(f"{i}. {tarefa['descricao']} - Prioridade: {prioridade} - {status} ")
 
 def selecionar_tarefas(tarefas):
     try:
@@ -89,8 +103,17 @@ def update_tarefas(tarefas):
         if tarefa_selecionada is not None:
             print("De a nova descrição para sua tarefa: ")
             nova_descricao = input()
+            print("Deseja definir uma nova prioridade? (s/n)")
+            resposta = input().lower()
+            if resposta == 's':
+                nova_prioridade = listar_e_definir_prioridades()
+                if nova_prioridade:
+                    tarefas[tarefa_selecionada]['prioridade'] = nova_prioridade
             tarefas[tarefa_selecionada]['descricao'] = nova_descricao
-
+            print(f"TAREFA ATUALIZADA PARA '{nova_descricao}' COM SUCESSO!")
+            
+        
+        
 def sair():
     print("Saindo do programa. Até mais!")
     exit()
