@@ -85,5 +85,3 @@ def update_tarefas(tarefas):
 def sair_e_salvar(tarefas):
     ga.salvar_tarefas(tarefas)
     print("Saindo do programa. Até mais!")
-    exit()
-
