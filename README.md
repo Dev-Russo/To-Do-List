@@ -190,9 +190,9 @@ Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICEN
 ## 👨‍💻 Autor
 
 **Seu Nome**
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-- LinkedIn: [Seu Perfil](https://linkedin.com/in/seu-perfil)
-- Email: seu.email@exemplo.com
+- GitHub: [@Meu Github](https://github.com/Dev-Russo)
+- LinkedIn: [Perfil Linkedin](https://www.linkedin.com/in/murilo-russo-544158204)
+- Email: murilo.russo@outlook.com
 
 ## 🙏 Agradecimentos
 
