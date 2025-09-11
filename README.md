@@ -16,6 +16,8 @@ Um gerenciador de tarefas completo e intuitivo desenvolvido em Python, oferecend
 - ❌ **Remover tarefas**
 - 🔍 **Filtrar** por status (todas, pendentes, concluídas)
 
+![CLI Screenshot](assets/cli-screenshot.png)
+
 ### 🖼️ Interface Gráfica (GUI)
 - 🎨 **Design moderno e minimalista**
 - 📊 **Painel de estatísticas** em tempo real
@@ -23,6 +25,8 @@ Um gerenciador de tarefas completo e intuitivo desenvolvido em Python, oferecend
 - ⚠️ **Alertas visuais** para tarefas atrasadas
 - 🌈 **Código de cores** por prioridade
 - 📝 **Edição por duplo clique**
+
+![GUI Screenshot](assets/gui-screenshot.png)
 
 ### 💾 Funcionalidades Gerais
 - 📁 **Persistência de dados** em JSON
