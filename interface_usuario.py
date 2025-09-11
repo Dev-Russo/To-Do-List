@@ -1,84 +1,182 @@
 from datetime import datetime
+from constantes import (
+    OPCOES_MENU, OPCOES_LISTAGEM, PRIORIDADES, 
+    MAPEAMENTO_PRIORIDADES, MENSAGENS, FORMATO_DATA
+)
 
-OPTION_1 = "1: Adicionar nova tarefa"
-OPTION_2 = "2: Listar todas as tarefas"
-OPTION_3 = "3: Marcar tarefa como concluída"
-OPTION_4 = "4: Remover tarefa"
-OPTION_5 = "5: Alterar tarefa"
-OPTION_6 = "6: Sair"
-
-PRIORIDADES = ["Baixa", "Média", "Alta"]
-
-MAPEAMENTO_DE_PRIORIDADES = {
-    "Baixa": 1,
-    "Média": 2,
-    "Alta": 3
-}
-
-def options():
-    print(" ")
-    print(OPTION_1)
-    print(OPTION_2)
-    print(OPTION_3)
-    print(OPTION_4)
-    print(OPTION_5)
-    print(OPTION_6)
+def mostrar_menu():
+    """Exibe o menu principal usando as constantes"""
+    print("\n" + "="*40)
+    print("    GERENCIADOR DE TAREFAS")
+    print("="*40)
     
+    for numero, opcao in OPCOES_MENU.items():
+        print(f"{numero}: {opcao}")
+    print("="*40)
+
 def definir_prioridades():
-    print("Prioridades disponíveis:")
-    for i, prioridade in enumerate(PRIORIDADES, start=1):
-        print(f"{i}. {prioridade}")
-    index = int(input("Selecione a prioridade (1-3): ")) - 1
-    if 0 <= index < len(PRIORIDADES):
-        return PRIORIDADES[index]
-    
+    """Define prioridade com melhor validação e usando constantes"""
+    while True:
+        print("\nPrioridades disponíveis:")
+        for i, prioridade in enumerate(PRIORIDADES, start=1):
+            print(f"  {i}. {prioridade}")
+        
+        try:
+            escolha = input(MENSAGENS['prompt_prioridade'])
+            if escolha.strip() == "":  # Permite pular a prioridade
+                return None
+            
+            index = int(escolha) - 1
+            if 0 <= index < len(PRIORIDADES):
+                return PRIORIDADES[index]
+            else:
+                print(f"Digite um número entre 1 e {len(PRIORIDADES)}.")
+        
+        except ValueError:
+            print(MENSAGENS['entrada_invalida'])
+
 def definir_data_hora():
-    print("Defina a data de termino da atividade (dd/mm/aaaa:): ")
-    data_input = input()
-    try:
-        data_termino = datetime.strptime(data_input, "%d/%m/%Y")
-        return data_termino
-    except ValueError:
-        print("Formato de data inválido. Use dd/mm/aaaa.")
-        return None
+    """Define data com melhor validação usando constantes"""
+    while True:
+        print(f"\n{MENSAGENS['prompt_data']}")
+        print("(Deixe em branco para pular)")
+        
+        data_input = input().strip()
+        
+        if not data_input:  # Permite pular a data
+            return None
+        
+        try:
+            data_termino = datetime.strptime(data_input, FORMATO_DATA)
+            
+            # Verifica se a data não é no passado
+            if data_termino.date() < datetime.now().date():
+                print("⚠️  A data não pode ser no passado. Tente novamente.")
+                continue
+            
+            return data_termino
+        
+        except ValueError:
+            print(MENSAGENS['formato_data_invalido'])
+            print("Exemplo: 25/12/2024")
 
+def escolher_formato_listagem():
+    """Escolhe como listar as tarefas usando constantes"""
+    print("\nComo você gostaria de listar as tarefas?")
     
-def list_format(tarefas):
-    print("Como você gostaria de listar as tarefas?")
-    print("1: Ordem Alfabética")
-    print("2: Por Prioridade")
-    print("3: Por Status (Concluída/Pendente)")
-    print("4: DateTime de Término")
-    type = int(input())
-    if type == 1:
-        tarefas.sort(key=lambda x: x['descricao'])
-    elif type == 2: 
-        tarefas.sort(key=lambda x: MAPEAMENTO_DE_PRIORIDADES.get(x.get('prioridade', ''), 0), reverse=True)
-    elif type == 3:
-        tarefas.sort(key=lambda x: x['concluida'])
-    elif type == 4:
-        tarefas.sort(key=lambda x: datetime.strptime(x['data_termino'], "%d/%m/%Y") if 'data_termino' in x else datetime.max)
-    else:
-        print("Opção inválida. Listando na ordem original.")
-    listar_tarefas(tarefas)
+    for numero, opcao in OPCOES_LISTAGEM.items():
+        print(f"  {numero}: {opcao}")
+    
+    while True:
+        try:
+            escolha = int(input("\nSua escolha: "))
+            if escolha in OPCOES_LISTAGEM:
+                return escolha
+            else:
+                print(MENSAGENS['opcao_invalida'])
+        except ValueError:
+            print(MENSAGENS['entrada_invalida'])
 
-def listar_tarefas(tarefas):
-    print("LISTA DE TAREFAS:")
-    if not tarefas:
-        print("Nenhuma tarefa encontrada.")
+def listar_tarefas_formatadas(lista_tarefas):
+    """Lista tarefas com melhor formatação"""
+    if not lista_tarefas:
+        print(f"\n📝 {MENSAGENS['nenhuma_tarefa']}")
         return
-    for i, tarefa in enumerate(tarefas, start=1):
-        status = "Concluída" if tarefa["concluida"] else "Pendente"
+    
+    print(f"\n{'='*60}")
+    print(f"{'LISTA DE TAREFAS':^60}")
+    print(f"{'='*60}")
+    
+    for i, tarefa in enumerate(lista_tarefas, start=1):
+        # Ícones para status
+        icone_status = "✅" if tarefa["concluida"] else "⏳"
+        
+        # Formatação de prioridade com cores (simuladas com símbolos)
         prioridade = tarefa.get("prioridade", "Sem prioridade")
-        data_termino = tarefa.get("data_termino", "Sem data de término")
-        print(f"{i}. {tarefa['descricao']} - {prioridade} - {status} - {data_termino} ")
+        if prioridade == "Alta":
+            prioridade = "🔴 Alta"
+        elif prioridade == "Média":
+            prioridade = "🟡 Média"
+        elif prioridade == "Baixa":
+            prioridade = "🟢 Baixa"
+        
+        status = "Concluída" if tarefa["concluida"] else "Pendente"
+        data_termino = tarefa.get("data_termino", "Sem data")
+        
+        print(f"{i:2d}. {icone_status} {tarefa['descricao'][:30]:<30} | {prioridade:<10} | {data_termino}")
+    
+    print("="*60)
 
-def selecionar_tarefas(tarefas):
-    try:
-        index = int(input()) - 1
-        if 0 <= index < len(tarefas):
-            return index
-        else:
-            print("Número inválido.")
-    except ValueError:
-        print("Entrada inválida. Por favor, digite um número.")
+def aplicar_ordenacao(lista_tarefas, tipo_ordenacao):
+    """Aplica ordenação baseada na escolha do usuário"""
+    if tipo_ordenacao == 1:  # Alfabética
+        return sorted(lista_tarefas, key=lambda x: x['descricao'].lower())
+    
+    elif tipo_ordenacao == 2:  # Por prioridade
+        return sorted(
+            lista_tarefas, 
+            key=lambda x: MAPEAMENTO_PRIORIDADES.get(x.get('prioridade', ''), 0), 
+            reverse=True
+        )
+    
+    elif tipo_ordenacao == 3:  # Por status
+        return sorted(lista_tarefas, key=lambda x: x['concluida'])
+    
+    elif tipo_ordenacao == 4:  # Por data
+        def ordenar_por_data(tarefa):
+            data_str = tarefa.get('data_termino')
+            if data_str and data_str != "Sem data de término":
+                try:
+                    return datetime.strptime(data_str, FORMATO_DATA)
+                except ValueError:
+                    pass
+            return datetime.max  # Tarefas sem data vão para o final
+        
+        return sorted(lista_tarefas, key=ordenar_por_data)
+    
+    return lista_tarefas
+
+def list_format(lista_tarefas):
+    """Função principal para listagem formatada"""
+    if not lista_tarefas:
+        print(f"\n📝 {MENSAGENS['nenhuma_tarefa']}")
+        return
+    
+    tipo_ordenacao = escolher_formato_listagem()
+    tarefas_ordenadas = aplicar_ordenacao(lista_tarefas, tipo_ordenacao)
+    listar_tarefas_formatadas(tarefas_ordenadas)
+
+def selecionar_tarefas(lista_tarefas):
+    """Seleciona uma tarefa com melhor validação"""
+    if not lista_tarefas:
+        return None
+    
+    while True:
+        try:
+            entrada = input("\nDigite o número da tarefa: ").strip()
+            if not entrada:
+                print("Por favor, digite um número.")
+                continue
+            
+            index = int(entrada) - 1
+            if 0 <= index < len(lista_tarefas):
+                return index
+            else:
+                print(f"Digite um número entre 1 e {len(lista_tarefas)}.")
+        
+        except ValueError:
+            print(MENSAGENS['entrada_invalida'])
+        
+        # Opção para cancelar
+        cancelar = input("Digite 'c' para cancelar ou Enter para tentar novamente: ").strip().lower()
+        if cancelar == 'c':
+            return None
+
+# Função de compatibilidade (mantém a interface antiga funcionando)
+def options():
+    """Função para compatibilidade com o código antigo"""
+    mostrar_menu()
+
+def listar_tarefas(lista_tarefas):
+    """Função para compatibilidade com o código antigo"""
+    listar_tarefas_formatadas(lista_tarefas)

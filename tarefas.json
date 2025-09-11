@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "descricao": "Apresenta\u00e7\u00e3o do Trabalho de Empreendedorismo",
         "concluida": false,
         "data_termino": "11/09/2025",
@@ -28,5 +29,11 @@
         "concluida": false,
         "prioridade": "Alta",
         "data_termino": "11/09/2025"
+=======
+        "descricao": "Documentação InfoAlto - SalveElas",
+        "prioridade": "Alta",
+        "data_termino": "11/09/2025",
+        "concluida": false
+>>>>>>> ac1eef3378913774379b124545f676fbd278a53d
     }
 ]

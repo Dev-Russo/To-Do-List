@@ -2,8 +2,8 @@ import os
 import gerenciador_tarefas as gt
 import gerenciador_arquivos as ga
 import interface_usuario as iu
-  
-  
+
+
 COMANDOS = {
     1: gt.adicionar_tarefa,
     2: iu.list_format,
@@ -11,7 +11,7 @@ COMANDOS = {
     4: gt.remover_tarefa,
     5: gt.update_tarefas,
     6: gt.sair_e_salvar
-}  
+}
 
 def main():
     lista_de_tarefas = []
@@ -25,7 +25,7 @@ def main():
             if N in COMANDOS:
                 funcao_escolhida = COMANDOS[N]
                 if N == 6: 
-                    funcao_escolhida(lista_de_tarefas) 
+                    funcao_escolhida(lista_de_tarefas)
                     break 
                 else:
                     funcao_escolhida(lista_de_tarefas)
