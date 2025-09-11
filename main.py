@@ -11,7 +11,7 @@ COMANDOS = {
     4: gt.remover_tarefa,
     5: gt.update_tarefas,
     6: gt.sair_e_salvar
-}  
+}
 
 def main():
     lista_de_tarefas = []

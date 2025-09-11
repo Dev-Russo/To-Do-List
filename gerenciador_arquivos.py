@@ -4,7 +4,7 @@ NAME_ARQUIVO = "tarefas.json"
 
 def carregar_tarefas():
     try:
-        with open(NAME_ARQUIVO, 'r') as file:
+        with open(NAME_ARQUIVO, 'r', encoding="UTF-8") as file:
             return json.load(file)
     except (FileNotFoundError, json.decoder.JSONDecodeError):
         return []
